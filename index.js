@@ -25,15 +25,38 @@ async function run() {
             const result = await chocolatesCollection.find().toArray();
             res.send(result);
         })
+        app.get('/chocolates/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await chocolatesCollection.findOne(query);
+            res.send(result);
+        })
         app.post('/chocolates', async (req, res) => {
             const data = req.body;
             console.log(data);
             const result = await chocolatesCollection.insertOne(data);
             res.send(result);
         })
-        app.delete('/chocolates/:id', async(req, res) => {
+        app.put('/chocolates/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const data = req.body;
+            const query = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateInfo = {
+                $set: {
+                    name: data.name,
+                    country: data.country,
+                    photo: data.photo,
+                    category: data.category,
+                    available: data.available,
+                }
+            }
+            const result = await chocolatesCollection.updateOne(query, updateInfo, options);
+            res.send(result);
+        })
+        app.delete('/chocolates/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
             const result = await chocolatesCollection.deleteOne(query);
             res.send(result);
         })
