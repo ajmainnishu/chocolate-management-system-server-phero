@@ -21,6 +21,10 @@ async function run() {
     try {
         await client.connect();
         const chocolatesCollection = client.db('chocolateDB').collection('chocolate');
+        app.get('/chocolates', async (req, res) => {
+            const result = await chocolatesCollection.find().toArray();
+            res.send(result);
+        })
         app.post('/chocolates', async (req, res) => {
             const data = req.body;
             console.log(data);
